@@ -11,6 +11,11 @@ board[3][4] = 1;
 board[4][3] = 1;
 board[4][4] = 2;
 
+// tempos de animação (ms)
+const PLACE_TIME = 600;
+const FLIP_TIME = 700;
+
+// desenha o tabuleiro
 function drawBoard() {
   boardEl.innerHTML = "";
   for (let r = 0; r < 8; r++) {
@@ -19,15 +24,17 @@ function drawBoard() {
       cell.classList.add("cell");
       cell.dataset.row = r;
       cell.dataset.col = c;
+
       if (board[r][c] === 1) {
-        const disk = document.createElement("div");
-        disk.classList.add("disk", "black");
-        cell.appendChild(disk);
+        const piece = document.createElement("div");
+        piece.classList.add("black");
+        cell.appendChild(piece);
       } else if (board[r][c] === 2) {
-        const disk = document.createElement("div");
-        disk.classList.add("disk", "white");
-        cell.appendChild(disk);
+        const piece = document.createElement("div");
+        piece.classList.add("white");
+        cell.appendChild(piece);
       }
+
       cell.addEventListener("click", handleClick);
       boardEl.appendChild(cell);
     }
@@ -35,25 +42,29 @@ function drawBoard() {
   statusEl.textContent = `Vez das ${currentPlayer === 1 ? "pretas" : "brancas"}`;
 }
 
+// clique do jogador
 function handleClick(e) {
   const r = parseInt(e.currentTarget.dataset.row);
   const c = parseInt(e.currentTarget.dataset.col);
   if (board[r][c] !== 0) return;
 
   if (makeMove(r, c, currentPlayer)) {
-    currentPlayer = 3 - currentPlayer; // alterna entre 1 e 2
+    currentPlayer = 3 - currentPlayer;
     drawBoard();
   }
 }
 
-// Direções possíveis (8)
+// direções possíveis
 const directions = [
   [0,1],[1,0],[-1,0],[0,-1],
   [1,1],[1,-1],[-1,1],[-1,-1]
 ];
 
+// faz a jogada
 function makeMove(r, c, player) {
   let valid = false;
+  let flips = [];
+
   for (let [dr, dc] of directions) {
     let rr = r + dr, cc = c + dc, captured = [];
     while (rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && board[rr][cc] === 3 - player) {
@@ -62,11 +73,70 @@ function makeMove(r, c, player) {
     }
     if (captured.length > 0 && rr >= 0 && rr < 8 && cc >= 0 && cc < 8 && board[rr][cc] === player) {
       valid = true;
-      board[r][c] = player;
-      for (let [cr, cc] of captured) board[cr][cc] = player;
+      flips = flips.concat(captured);
     }
   }
+
+  if (valid) {
+    board[r][c] = player;
+    animatePlacement(r, c, player);
+
+    for (let [cr, cc] of flips) {
+      board[cr][cc] = player;
+      animateFlip(cr, cc, player);
+    }
+  }
+
   return valid;
 }
 
+// animação de colocar peça
+function animatePlacement(r, c, player) {
+  const index = r * 8 + c;
+  const cell = boardEl.children[index];
+  const piece = document.createElement("div");
+
+  if (player === 1) {
+    piece.classList.add("placing-black");
+    setTimeout(() => {
+      piece.classList.remove("placing-black");
+      piece.classList.add("black");
+    }, PLACE_TIME);
+  } else {
+    piece.classList.add("placing-white");
+    setTimeout(() => {
+      piece.classList.remove("placing-white");
+      piece.classList.add("white");
+    }, PLACE_TIME);
+  }
+
+  cell.appendChild(piece);
+}
+
+// animação de flip
+function animateFlip(r, c, player) {
+  const index = r * 8 + c;
+  const cell = boardEl.children[index];
+  const oldPiece = cell.querySelector(".black, .white");
+  if (oldPiece) cell.removeChild(oldPiece);
+
+  const piece = document.createElement("div");
+  if (player === 1) {
+    piece.classList.add("flip-to-black");
+    setTimeout(() => {
+      piece.classList.remove("flip-to-black");
+      piece.classList.add("black");
+    }, FLIP_TIME);
+  } else {
+    piece.classList.add("flip-to-white");
+    setTimeout(() => {
+      piece.classList.remove("flip-to-white");
+      piece.classList.add("white");
+    }, FLIP_TIME);
+  }
+
+  cell.appendChild(piece);
+}
+
+// inicializa
 drawBoard();
