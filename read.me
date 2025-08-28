@@ -1,0 +1,34 @@
+Codigos de Utilização do xampp
+
+iniciar xampp: cd /opt/lampp
+sudo ./lampp start
+
+fechar xampp:
+cd /opt/lampp
+sudo ./lampp stop
+
+
+Especificações da Arquitetura do Projeto
+
+- Cliente Servidor
+O cliente cuida só da interface gráfica e envio de movimentos. 
+Enquanto o servidor gerencia a Autenticação, sincronização de partidas e execução da IA
+
+Sobre a Escalabilidade: pode-se abrir novas instâncias para suportar mais partidas
+Tolerância a falhas: O estado da partida fica armazenada no servidor, todos os logs de movimentos, assim se um jogador desconectar o jogo não será perdido.
+
+
+ -Servidor
+
+O servidor será do tipo corrente já que várias partidas podem estar em andamento ao mesmo tempo.
+Implementação: Threads. Cada partida ira rodar em um thread/processo separado para que cada partida não tenha envolvimento com outros jogos
+
+-Virtualização 
+
+VM/Xampp, é simples e já é integrado com servidor Apache, BD e PHP, o que é ótimo para protótipos acadêmicos
+
+-Distribuição
+
+Servidor central único, exposto pela internet via DuckDNS
+O DuckDNS permitirá os jogadores externos acessar o serviço local usando um domínio dinâmico
+
