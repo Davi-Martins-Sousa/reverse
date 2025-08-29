@@ -6,21 +6,21 @@ body {
 
 #board {
   display: grid;
-  grid-template-columns: repeat(8, 50px);
-  grid-template-rows: repeat(8, 50px);
-  margin: 40px auto;
-  width: 400px;
-  height: 400px;
+  grid-template-columns: repeat(8, 64px);
+  grid-template-rows: repeat(8, 64px);
+  margin: 0px auto;
+  width: 512px;
+  height: 512px;
   border: 3px solid #333;
 
-  /* perspectiva 3D */
+  /* perspectiva 3D 
   transform: perspective(512px) rotateX(45deg);
-  transform-style: preserve-3d;
+  transform-style: preserve-3d;*/
 }
 
 .cell {
-  width: 50px;
-  height: 50px;
+  width: 64px;
+  height: 64px;
   background-size: cover;
   border: 1px solid #006400;
   position: relative; /* permite posicionar peças dentro */
@@ -39,8 +39,8 @@ body {
   position: absolute;
   bottom: 0;
   left: 50%;
-  width: 48px;
-  height: 81px;
+  width: 64px;
+  height: 64px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center bottom;
